@@ -16,6 +16,7 @@ A command-line application to manage restaurant customers, tables, and reservati
 - **ORM:** SQLAlchemy
 - **Testing:** unittest
 - **Development Environment:** pipenv
+- **CLI UI:** tabulate
 
 ##  Project Structure
 restaurant-reservation-system/
