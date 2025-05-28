@@ -1,4 +1,5 @@
 # lib/cli.py
+from tabulate import tabulate
 from lib.db.models import Reservation, session, Customer, Table
 from datetime import datetime
 
@@ -11,10 +12,6 @@ def create_reservation():
     try:
         reservation_date = datetime.strptime(date_str, "%Y-%m-%d").date()
         reservation_time = datetime.strptime(time_str, "%H:%M").time()
-
-        # Debug: Check existing tables
-        tables = session.query(Table).all()
-        # print("DEBUG - Tables in DB:", [(t.id, t.table_number) for t in tables])
 
         customer = session.query(Customer).get(customer_id)
         table = session.query(Table).get(table_id)
@@ -45,19 +42,19 @@ def view_reservations_by_date():
         reservations = session.query(Reservation).filter_by(reservation_date=date_obj).all()
 
         if reservations:
+            table_data = []
             for r in reservations:
-                # print("DEBUG - Reservation object:", r)
-                # print("DEBUG - Customer object:", r.customer)
-                # print("DEBUG - Table object:", r.table)
-
                 customer_name = r.customer.name if r.customer else "Unknown"
-                table_id = r.table.id if r.table else "Unknown"
-                print(f"Reservation ID: {r.id}, Customer: {customer_name}, Table ID: {table_id}, Time: {r.reservation_time}")
+                table_number = r.table.table_number if r.table else "Unknown"
+                res_time = r.reservation_time.strftime("%H:%M")
+                table_data.append([r.id, customer_name, table_number, res_time])
+            
+            print("\nReservations:")
+            print(tabulate(table_data, headers=["ID", "Customer", "Table", "Time"], tablefmt="grid"))
         else:
             print("No reservations for that date.")
     except Exception as e:
         print("Invalid date or error:", e)
-
 
 def add_customer():
     name = input("Customer name: ")
@@ -67,11 +64,11 @@ def add_customer():
     session.commit()
     print("Customer added.")
 
-    # DEBUG: Show all customers
-    print("All Customers:")
-    for c in session.query(Customer).all():
-        print(f"ID: {c.id}, Name: {c.name}")
-
+    # Optional: list customers
+    customers = session.query(Customer).all()
+    table_data = [[c.id, c.name, c.phone] for c in customers]
+    print("\nAll Customers:")
+    print(tabulate(table_data, headers=["ID", "Name", "Contact"], tablefmt="grid"))
 
 def main():
     while True:
