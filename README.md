@@ -55,8 +55,6 @@ restaurant-reservation-system/
 
 -View reservations by date
 
--All reservation data is persisted in an SQLite database (dev.db).
-
 # Running Tests
 -If you've written unit tests:
 -python -m unittest discover tests
