@@ -45,7 +45,7 @@ restaurant-reservation-system/
 4. Run seed script
     pipenv run python lib/db/seed.py
 5. Run the program
-    python lib/cli.py
+    pipenv run python main.py
 # Usage
 -Follow the menu options to:
 
