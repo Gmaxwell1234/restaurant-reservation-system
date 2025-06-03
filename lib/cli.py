@@ -76,7 +76,8 @@ def main():
         print("1. Add Customer")
         print("2. Create Reservation")
         print("3. View Reservations by Date")
-        print("4. Exit")
+        print("4. View My Reservations")
+        print("5. Exit")
         choice = input("Enter choice: ")
 
         if choice == '1':
@@ -86,7 +87,33 @@ def main():
         elif choice == '3':
             view_reservations_by_date()
         elif choice == '4':
+            view_customer_reservations()
+        elif choice == '5':
             print("Mambo iko top!")
             break
         else:
             print("Invalid choice. Try again.")
+
+def view_customer_reservations():
+    try:
+        customer_id = int(input("Enter your Customer ID: "))
+        customer = session.query(Customer).get(customer_id)
+        
+        if not customer:
+            print("Customer not found.")
+            return
+
+        reservations = session.query(Reservation).filter_by(customer_id=customer_id).all()
+
+        if reservations:
+            data = [
+                [r.id, r.reservation_date, r.reservation_time.strftime("%H:%M"), r.table.table_number]
+                for r in reservations
+            ]
+            print("\nYour Reservations:")
+            print(tabulate(data, headers=["ID", "Date", "Time", "Table Number"], tablefmt="grid"))
+        else:
+            print("You have no reservations.")
+    except Exception as e:
+        print("Error:", e)
+
